@@ -5,7 +5,7 @@
 
 typedef struct package{
     int n;
-    char *s;
+    char *s;  
 }package;
 
 void * function(void * parametro){
