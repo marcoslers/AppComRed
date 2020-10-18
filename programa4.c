@@ -3,39 +3,36 @@
 #include <pthread.h>
 #include <string.h>
 
-typedef struct matrix{
-    int **m;
-    int r;
-    int c;
-}matrix;
 
-typedef struct package{
-    matrix *m1;
-    matrix *m2;
-    matrix *mrx;
-    int l,h;
-}package;
+int **m1,**m2,**m3;
+
+int m1r,m1c,m2r,m2c,m3r,m3c;
+
+typedef struct {
+    int l;
+    int h;
+}pair;
 
 void * function(void * parametro){
 
-    package *pkg = (package*)parametro;
+    pair *pr = (pair*)parametro;
 
-    printf("l: %d\n",pkg->l);
-    printf("h: %d\n",pkg->h);
+    int l=pr->l,h=pr->h,c2=0;
 
-    //pkg->m1->m[0][0]=55;
-    //pkg->m1->m[1][0]=65;
-       
+    for(int i=l;i<=h;i++){
+        for(int j=0;j<m2c;j++){
+            for(int k=0;k<m1c;k++){
+               m3[i][j]+=m1[i][k]*m2[k][j];    
+            }
+        }
+    }
+
 }
 
 int main(int argc, char *argv[]){
   
-    time_t t;
-    srand((unsigned) time(&t));
-
-    matrix m1;
-    matrix m2;
-    matrix mrx;
+    //time_t t;
+    //srand((unsigned) time(&t));
 
     int nt,rxt,r,l=0,h=0;
 
@@ -44,57 +41,67 @@ int main(int argc, char *argv[]){
         exit(0);
     }
 
-    m1.r=atoi(argv[1]);
-    m1.c=atoi(argv[2]);
-    m2.r=atoi(argv[3]);
-    m2.c=atoi(argv[4]);
-    mrx.r=m1.r;
-    mrx.c=m2.c;
+    m1r=atoi(argv[1]);
+    m1c=atoi(argv[2]);
+    m2r=atoi(argv[3]);
+    m2c=atoi(argv[4]);
+    m3r=m1r;
+    m3c=m2c;
 
     nt=atoi(argv[5]);
 
-    if(nt<1 || nt>m1.r){
+    if(nt<1 || nt>m1r){
         printf("error en el # de hilos");
         exit(0);
-    }else if(m1.c!=m2.r){
+    }else if(m1c!=m2r){
         printf("error en la longitud de las tablas");
         exit(0);        
     }
 
-    m1.m = (int **)malloc(sizeof(int*)*m1.r);
-    m2.m = (int **)malloc(sizeof(int*)*m2.r);
-    mrx.m = (int **)malloc(sizeof(int*)*mrx.r);
+    m1 = (int **)malloc(sizeof(int*)*m1r);
+    m2 = (int **)malloc(sizeof(int*)*m2r);
+    m3 = (int **)malloc(sizeof(int*)*m3r);
 
-    for(int i=0;i<m1.r;i++){
-        m1.m[i]=(int*)malloc(sizeof(int)*m1.c);
-        for(int j=0;j<m1.c;j++){
+    for(int i=0;i<m1r;i++){
+        m1[i]=(int*)malloc(sizeof(int)*m1c);
+        for(int j=0;j<m1c;j++){
             int r=rand()%6;
-            m1.m[i][j]=r;
-           // printf("%d ",m1.m[i][j]);
+            m1[i][j]=r;
+            printf("%d ",m1[i][j]);
         }
-        //printf("\n");
+        printf("\n");
     }
 
-    for(int i=0;i<m2.r;i++){
-        m2.m[i]=(int*)malloc(sizeof(int)*m2.c);
-        for(int j=0;j<m2.c;j++){
+    printf("\n");
+
+    for(int i=0;i<m2r;i++){
+        m2[i]=(int*)malloc(sizeof(int)*m2c);
+        for(int j=0;j<m2c;j++){
             int r=rand()%6;
-            m2.m[i][j]=r;
-          //  printf("%d ",m2.m[i][j]);
+            m2[i][j]=r;
+            printf("%d ",m2[i][j]);
         }
-        //printf("\n");
+        printf("\n");
     }
 
-    for(int i=0;i<mrx.r;i++){
-        mrx.m[i]=(int*)malloc(sizeof(int)*mrx.c);
+    for(int i=0;i<m3r;i++){
+        m3[i]=(int*)malloc(sizeof(int)*m3c);
+        for(int j=0;j<m3c;j++){
+            m3[i][j]=0;
+        }
     }  
 
-    rxt=m1.r/nt;
-    r=m1.r%nt;
+    rxt=m1r/nt;
+    r=m1r%nt;
 
     pthread_t *threads;
-
     threads = (pthread_t *)malloc(sizeof(pthread_t)*nt);
+
+    pair * pairs;
+    pairs = (pair*)malloc(sizeof(pair)*nt);
+
+
+    //printf("\n");
 
     for(int i=0;i<nt;i++){
 
@@ -102,26 +109,26 @@ int main(int argc, char *argv[]){
             l=0;
             h+=(rxt+r-1);
         }else{
-            l+= rxt+r;
-            h+=(rxt+r-1);
+            l=h+1;
+            h+=rxt;
         }
-     
-        package pck;
-        pck.m1=&m1;
-        pck.m2=&m2;
-        pck.mrx=&mrx;
-        pck.l=l;
-        pck.h=h;
-
-        printf("%d %d\n",l,h);
-
-        //pthread_create(&threads[i], NULL, function,(void*)&pck);
+        pairs[i].l=l;
+        pairs[i].h=h;
+        pthread_create(&threads[i], NULL, function,(void*)&pairs[i]);
     }
 
     for(int i=0; i<nt; i++){
-
         pthread_join(threads[i], NULL);
     }
+
+    printf("\n");
+
+    for(int i=0;i<m3r;i++){
+        for(int j=0;j<m3c;j++){
+            printf("%d ",m3[i][j]);
+        }
+        printf("\n");
+    }  
 
     free(threads);
 
