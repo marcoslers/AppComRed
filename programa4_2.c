@@ -118,29 +118,29 @@ int main(int argc, char *argv[]){
 
         if(i==0){
             l=0;
-            h+=va[i];
+            h+=(va[i]-1);
         }else{
             l=h+1;
             h+=va[i];
         }
         pairs[i].l=l;
         pairs[i].h=h;
-        printf("l: %d h: %d\n",l,h);
-        //pthread_create(&threads[i], NULL, function,(void*)&pairs[i]);
+        //printf("l: %d h: %d\n",l,h);
+        pthread_create(&threads[i], NULL, function,(void*)&pairs[i]);
     }
 
-    /*for(int i=0; i<nt; i++){
+    for(int i=0; i<nt; i++){
         pthread_join(threads[i], NULL);
-    }*/
+    }
 
     //printf("\n");
 
-    /*for(int i=0;i<m3r;i++){
+    for(int i=0;i<m3r;i++){
         for(int j=0;j<m3c;j++){
             printf("%d ",m3[i][j]);
         }
         printf("\n");
-    } */ 
+    }  
 
     free(threads);
 
