@@ -19,11 +19,14 @@ void * function(void * parametro){
 
     int l=pr->l,h=pr->h,c2=0;
 
+    //printf("%d %d\n",l,h);
+
     for(int i=l;i<=h;i++){
         for(int j=0;j<m2c;j++){
             for(int k=0;k<m1c;k++){
-               m3[i][j]+=m1[i][k]*m2[k][j];    
+               m3[i][j]+=m1[i][k]*m2[k][j];
             }
+            //printf(" %d %d\n",i,j);
         }
     }
 
@@ -101,7 +104,7 @@ int main(int argc, char *argv[]){
     pairs = (pair*)malloc(sizeof(pair)*nt);
 
 
-    //printf("\n");
+    printf("\n");
 
     for(int i=0;i<nt;i++){
 
