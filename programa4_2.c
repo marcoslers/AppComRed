@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
     //time_t t;
     //srand((unsigned) time(&t));
 
-    int nt,rxt,r,l=0,h=0;
+    int nt,l=0,h=0;
 
     if(argc!=6){
         printf("parametros incompletos\n");
@@ -70,21 +70,21 @@ int main(int argc, char *argv[]){
         for(int j=0;j<m1c;j++){
             int rr=rand()%6;
             m1[i][j]=rr;
-            printf("%d ",m1[i][j]);
+    //      printf("%d ",m1[i][j]);
         }
-        printf("\n");
+    //    printf("\n");
     }
 
-    printf("\n");
+    //printf("\n");
 
     for(int i=0;i<m2r;i++){
         m2[i]=(int*)malloc(sizeof(int)*m2c);
         for(int j=0;j<m2c;j++){
             int rr=rand()%6;
             m2[i][j]=rr;
-            printf("%d ",m2[i][j]);
+        //    printf("%d ",m2[i][j]);
         }
-        printf("\n");
+        //printf("\n");
     }
 
     for(int i=0;i<m3r;i++){
@@ -94,29 +94,38 @@ int main(int argc, char *argv[]){
         }
     }  
 
-    rxt=m1r/nt;
-    r=m1r%nt;
-
     pthread_t *threads;
     threads = (pthread_t *)malloc(sizeof(pthread_t)*nt);
 
     pair * pairs;
     pairs = (pair*)malloc(sizeof(pair)*nt);
 
+    int va[nt];
+    for(int i=0;i<nt;i++)va[i]=0;
 
-    printf("\n");
+    int c=0;
+    for(int i=0;i<m1r;i++){
+        va[c]+=1;
+        if(c<(nt-1)) c+=1;
+        else c=0;
+    }
+
+    //for(int i=0;i<nt;i++)printf("%d\n",va[i]);
+    
+    //printf("\n");
 
     for(int i=0;i<nt;i++){
 
         if(i==0){
             l=0;
-            h+=(rxt+r-1);
+            h+=(va[i]-1);
         }else{
             l=h+1;
-            h+=rxt;
+            h+=va[i];
         }
         pairs[i].l=l;
         pairs[i].h=h;
+        //printf("l: %d h: %d\n",l,h);
         pthread_create(&threads[i], NULL, function,(void*)&pairs[i]);
     }
 
@@ -124,7 +133,7 @@ int main(int argc, char *argv[]){
         pthread_join(threads[i], NULL);
     }
 
-    printf("\n");
+    //printf("\n");
 
     for(int i=0;i<m3r;i++){
         for(int j=0;j<m3c;j++){
