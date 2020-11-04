@@ -17,16 +17,13 @@ void * function(void * parametro){
 
     pair *pr = (pair*)parametro;
 
-    int l=pr->l,h=pr->h,c2=0;
-
-    //printf("%d %d\n",l,h);
+    int l=pr->l,h=pr->h;
 
     for(int i=l;i<=h;i++){
         for(int j=0;j<m2c;j++){
             for(int k=0;k<m1c;k++){
                m3[i][j]+=m1[i][k]*m2[k][j];
             }
-            //printf(" %d %d\n",i,j);
         }
     }
 
@@ -70,21 +67,21 @@ int main(int argc, char *argv[]){
         for(int j=0;j<m1c;j++){
             int rr=rand()%6;
             m1[i][j]=rr;
-            printf("%d ",m1[i][j]);
+        //    printf("%d ",m1[i][j]);
         }
-        printf("\n");
+      //  printf("\n");
     }
 
-    printf("\n");
+    //printf("\n");
 
     for(int i=0;i<m2r;i++){
         m2[i]=(int*)malloc(sizeof(int)*m2c);
         for(int j=0;j<m2c;j++){
             int rr=rand()%6;
             m2[i][j]=rr;
-            printf("%d ",m2[i][j]);
+      //      printf("%d ",m2[i][j]);
         }
-        printf("\n");
+    //    printf("\n");
     }
 
     for(int i=0;i<m3r;i++){
@@ -104,7 +101,7 @@ int main(int argc, char *argv[]){
     pairs = (pair*)malloc(sizeof(pair)*nt);
 
 
-    printf("\n");
+  //  printf("\n");
 
     for(int i=0;i<nt;i++){
 
@@ -124,13 +121,13 @@ int main(int argc, char *argv[]){
         pthread_join(threads[i], NULL);
     }
 
-    printf("\n");
+    //printf("\n");
 
     for(int i=0;i<m3r;i++){
         for(int j=0;j<m3c;j++){
-            printf("%d ",m3[i][j]);
+          //  printf("%d ",m3[i][j]);
         }
-        printf("\n");
+        //printf("\n");
     }  
 
     free(threads);
