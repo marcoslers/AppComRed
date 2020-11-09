@@ -1,0 +1,9 @@
+Inconsistencia de datos: Un conjunto trabaja con un tipo de datos y otro conjunto con otro tipo
+						 Sobren datos
+						 Falten datos
+						 Que el dato sea leído antes de que sea escrito
+La sección crítica representa al recurso compartido
+
+En el estado de espera o bloqueado es donde caen los procesos cuando quieren entrar a la región crítica y está ocupada, es decir, cuando el valor del semáforo está en cero y hacen un wait(). - Espera no activa.
+El semáforo se puede inicializar con un valor mayor a 1, lo cual permitira que más de un proceso accese a la región
+crítca.
