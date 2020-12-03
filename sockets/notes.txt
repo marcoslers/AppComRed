@@ -1,0 +1,27 @@
+Sockets
+Uniquely identified by
+    -an internet address
+    -an end to end protocol(TCP|UDP)
+    -a port number
+Two types of (TCP/IP sockets)
+    Stream sockets (TCP)
+    Datagram sockets (UDP)
+
+A file descriptor is a number that uniquely identifies
+an open file
+it describes a data resource, and how that resource 
+may be accessed
+
+
+int socket(int domain, int type, int protocol);
+
+-domain argument selects the protocol family which will be used for communication
+-type pecifies the communication semantics
+-the protocol specifies a particular protocol to be used with the
+socket.  Normally only a single protocol exists to support a
+particular socket type within a given protocol family, in which case
+protocol can be specified as 0.
+
+
+
+
