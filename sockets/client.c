@@ -12,7 +12,7 @@
 #define MAX 80
 
 int main(int argv,char *args[]){
-    int sockfd, connfd; 
+    int sockfd, connfd,flag=1; 
     struct sockaddr_in server, client; 
   
     //domain,type,protocol
@@ -23,6 +23,13 @@ int main(int argv,char *args[]){
     }else{
         printf("Socket successfully created..\n");    
     } 
+
+    if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&flag,sizeof(flag))==-1){
+        printf("setsockopt failed...\n"); 
+        exit(0); 
+    }else{
+        printf("setsockopt succes\n"); 
+    }
 
     bzero(&server, sizeof(server)); 
   
@@ -49,7 +56,8 @@ int main(int argv,char *args[]){
         n = 0;
         while ((buff[n++] = getchar()) != '\n'); 
         
-        write(sockfd, buff, sizeof(buff));
+        //write(sockfd, buff, sizeof(buff));
+        int nbytess=sendto(sockfd,buff,sizeof(buff),0,NULL,0);
 
         //**
         if((strncmp(buff, "exit", 4)) == 0) { 
@@ -60,7 +68,8 @@ int main(int argv,char *args[]){
     
         bzero(buff, sizeof(buff));
         
-        read(sockfd, buff, sizeof(buff));  
+        //read(sockfd, buff, sizeof(buff));  
+        int nbytesr=recvfrom(sockfd,buff,sizeof(buff),0,NULL,NULL);
         printf(": %s\n",buff);
         
         if((strncmp(buff, "exit", 4)) == 0) { 

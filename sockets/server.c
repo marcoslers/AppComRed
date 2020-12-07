@@ -12,7 +12,7 @@
 
 int main(int argv,char *args[]){
 
-    int sockfd,connfd,len; 
+    int sockfd,connfd,len,flag=1; 
     struct sockaddr_in server,client; 
     
     //domain,type,protocol
@@ -24,6 +24,13 @@ int main(int argv,char *args[]){
     }else{
         printf("Socket successfully created..\n");
     } 
+
+    if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&flag,sizeof(flag))==-1){
+        printf("setsockopt failed...\n"); 
+        exit(0); 
+    }else{
+        printf("setsockopt succes\n"); 
+    }
 
     //Llena de ceros los n siguientes bytes apuntados por server
     bzero(&server, sizeof(server)); 
@@ -48,7 +55,7 @@ int main(int argv,char *args[]){
     //para acpetar peticiones entrantes de conección 
     //5 es el numero maximo de peticiones pendientes 
     //que pueden formarse 
-    if ((listen(sockfd, 5)) != 0) { 
+    if ((listen(sockfd, 1)) != 0) { 
         printf("Listen failed...\n"); 
         exit(0); 
     }else{
@@ -56,11 +63,11 @@ int main(int argv,char *args[]){
     } 
 
     len = sizeof(client);
+    
     //Accept extrae la primera peticion de coneccion de la cola
-    //crea un nuevo socket y retorna un filedescriptor refiriendose
-    //a ese nuevo socket
+    //retorna el filedescriptor de l canal de comunicacion
     connfd = accept(sockfd,(struct sockaddr*)&client, &len);
-
+    //accept descritor del canal de comunicacion 
     if(connfd<0){ 
         printf("server acccept failed...\n"); 
         exit(0); 
@@ -71,13 +78,26 @@ int main(int argv,char *args[]){
     char buff[MAX]; 
     int n;
     while(1){
+
+        /*//Accept extrae la primera peticion de coneccion de la cola
+        //retorna el filedescriptor de l canal de comunicacion
+        connfd = accept(sockfd,(struct sockaddr*)&client, &len);
+        //accept descritor del canal de comunicacion 
+        if(connfd<0){ 
+            printf("server acccept failed...\n"); 
+            exit(0); 
+        }else{
+            printf("server acccept the client...\n"); 
+        }
+*/
         bzero(buff, MAX); 
 
         //Leer mensaje del cliente y copiarlo en el buffer
-        read(connfd, buff, sizeof(buff)); 
-        
+        //read(connfd, buff, sizeof(buff)); 
+        int nbytesr=recvfrom(connfd,buff,sizeof(buff),0,NULL,NULL);
+
         //**
-        if (strncmp("exit", buff, 4) == 0) { 
+        if(strncmp("exit", buff, 4) == 0) { 
             printf("Server Exit...\n"); 
             break; 
         } 
@@ -94,14 +114,16 @@ int main(int argv,char *args[]){
         printf("\t: ");
         while((buff[n++] = getchar()) != '\n'); 
   
-        // Enviar el buffer al cliente
-        write(connfd, buff, sizeof(buff)); 
-  
+        // Enviar el contendio buffer al cliente
+        //write(connfd, buff, sizeof(buff)); 
+        int nbytess=sendto(connfd,buff,sizeof(buff),0,NULL,0);
+
         //salir al leer la palabra exit
         if (strncmp("exit", buff, 4) == 0) { 
             printf("Server Exit...\n"); 
             break; 
         } 
+        //close(connfd);
     }
 
     close(sockfd);

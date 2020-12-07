@@ -116,3 +116,12 @@ Private network numbers
 
 
 //https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+
+//setsockopt reuse doc
+// https://stackoverflow.com/questions/24194961/how-do-i-use-setsockoptso-reuseaddr
+
+// sendto doc
+//https://linux.die.net/man/2/sendto 
+
+//recvfrom doc
+// https://man7.org/linux/man-pages/man2/recvfrom.2.html
