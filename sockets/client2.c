@@ -15,31 +15,30 @@ int main(int argv,char *args[]){
     int sockfd, connfd,flag=1; 
     struct sockaddr_in server, client; 
   
-    //domain,type,protocol
     sockfd = socket(AF_INET, SOCK_STREAM, 0); 
     if (sockfd == -1) { 
         printf("socket creation failed...\n"); 
         exit(0); 
-    }else{
-        printf("Socket successfully created..\n");    
-    } 
+    }
 
     if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&flag,sizeof(flag))==-1){
         printf("setsockopt failed...\n"); 
         exit(0); 
-    }else{
-        printf("setsockopt succes\n"); 
     }
 
     bzero(&server, sizeof(server)); 
   
-    //IPv4, direccion y puerto en network byte order
     server.sin_family = AF_INET; 
-    //localhost
     server.sin_addr.s_addr = inet_addr("127.0.0.1"); 
     server.sin_port = htons(PORT); 
 
-    // Conectar al socket del servidor
+     // Conectar al socket del servidor
+    
+
+    char buff[MAX]; 
+    int n;
+     
+
     if (connect(sockfd, (struct sockaddr*)&server, sizeof(server)) != 0) { 
         printf("connection with the server failed...\n"); 
         exit(0); 
@@ -47,38 +46,31 @@ int main(int argv,char *args[]){
         printf("connected to the server..\n"); 
     }
 
-    char buff[MAX]; 
-    int n;
-    while(1){ 
-
+    do{
         bzero(buff, sizeof(buff)); 
         printf("\t: ");
         n = 0;
         while ((buff[n++] = getchar()) != '\n'); 
         
-        //write(sockfd, buff, sizeof(buff));
         int nbytess=sendto(sockfd,buff,sizeof(buff),0,NULL,0);
 
-        //**
         if((strncmp(buff, "exit", 4)) == 0) { 
             printf("Client Exit...\n"); 
             break; 
         } 
-        //**
-    
-        bzero(buff, sizeof(buff));
-        
-        //read(sockfd, buff, sizeof(buff));  
+            
+            bzero(buff, sizeof(buff));
+           
         int nbytesr=recvfrom(sockfd,buff,sizeof(buff),0,NULL,NULL);
-        printf(": %s\n",buff);
-        
-        if((strncmp(buff, "exit", 4)) == 0) { 
-            printf("Client Exit...\n"); 
-            break; 
-        } 
-    } 
+        printf(": %s\n",buff);        
+            
+    }while(strncmp(buff, "exit", 4) != 0);
 
     close(sockfd);
+       
+
+    
+
 
     return 0;
 }
