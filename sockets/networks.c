@@ -125,3 +125,13 @@ Private network numbers
 
 //recvfrom doc
 // https://man7.org/linux/man-pages/man2/recvfrom.2.html
+
+/*
+https://stackoverflow.com/questions/48019553/socket-listen-not-reusing-new-connections
+
+Note: There's a difference between open connections and 
+incoming connections. Your server can maintain many 
+simultaneous open connections while it can handle only
+few simultaneous incoming connections. In your case 
+those 3 connections are open. 
+*/
