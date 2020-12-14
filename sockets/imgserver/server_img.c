@@ -9,12 +9,13 @@
 #include<pthread.h>
 
 #define PORT 7200
-#define MSGLEN 1500
+#define MAX 1500
 
 typedef struct{
     int id;
+    int msglen;
     char filename[15];
-    char msg[MSGLEN];
+    char msg[MAX];
 }Package; 
 
 
@@ -27,7 +28,7 @@ void *handler(void *args){
     
     while(1){
 
-        bzero(pkg.msg, MSGLEN); 
+        bzero(pkg.msg, MAX); 
 
         int nbytesr=recvfrom(*idCh,&pkg,sizeof(Package),0,NULL,NULL);
 
@@ -46,9 +47,11 @@ void *handler(void *args){
             break;
         }
 
-        fwrite(pkg.msg,sizeof(char),MSGLEN,fp);
+        printf("%d\n",pkg.msglen);
 
-        bzero(pkg.msg, MSGLEN);
+        fwrite(pkg.msg,sizeof(char),pkg.msglen,fp);
+
+        bzero(pkg.msg, MAX);
         pkg.id++;
 
         int nbytess=sendto(*idCh,&pkg,sizeof(Package),0,NULL,0);

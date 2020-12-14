@@ -10,17 +10,18 @@
 #include<arpa/inet.h>
 
 #define PORT 7200
-#define MSGLEN 1500
+#define MAX 1500
 
 typedef struct{
     int id;
+    int msglen;
     char filename[15];
-    char msg[MSGLEN];
+    char msg[MAX];
 }Package; 
 
 void sendMsg(int sockfd,char *filename){
 
-    int idMsg = 0;
+    int idMsg = 0,filesize,n=0;
     char path[30]="./source/", en ='\0';
     strcat(path,filename);
     strncat(path,&en,1);
@@ -33,26 +34,33 @@ void sendMsg(int sockfd,char *filename){
         exit(0);
     } 
 
+    fseek(fp, 0L, SEEK_END);
+    filesize = ftell(fp);
+    rewind(fp);
+
     Package pkg;
 
     strcpy(pkg.filename,filename);
 
-    while(fread(pkg.msg,sizeof(char),MSGLEN,fp)>0){
+    int nread;
+
+    while((nread=fread(pkg.msg,sizeof(char),MAX,fp))>0){
 
         pkg.id=idMsg++;
+        pkg.msglen =nread; 
 
         int nbytess=sendto(sockfd,&pkg,sizeof(Package),0,NULL,0);
             
-        bzero(pkg.msg,MSGLEN); 
+        bzero(pkg.msg,MAX); 
 
         int nbytesr=recvfrom(sockfd,&pkg,sizeof(Package),0,NULL,NULL);
-
+        
+        
         if(pkg.id!=idMsg){
             printf("error sending package\n");
             exit(0);
         }
-
-        bzero(pkg.msg,MSGLEN);
+        bzero(pkg.msg,MAX);
     }
 
     pkg.id=-1;
