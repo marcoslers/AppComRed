@@ -49,8 +49,13 @@ int main(int argv,char *args[]){
     char buff[BUFSIZE];
 
     while(1){
+        //Recepcion mensaje del cliente
         int nrecv = recvfrom(sockfd,(void*)buff,BUFSIZE,0,(struct sockaddr*)&client,&clilen);
         printf("%s\n",buff);
+        bzero(buff,BUFSIZE);
+        strcpy(buff,"Hola cliente");
+        //Envio de mensaje al cliente
+        int nsend = sendto(sockfd,(void*)buff,BUFSIZE,0,(struct sockaddr*)&client,clilen);
     }
 
     close(sockfd);

@@ -50,6 +50,11 @@ int main(int argv,char *args[]){
     //Envio de mensaje al servidor
     int nbytess=sendto(sockfd,buff,sizeof(buff),0,(struct sockaddr*)&server,sizeof(server));
 
+    bzero(buff, BUFSIZE);     
+    //Recepcion de respuesta
+    int nrecv = recvfrom(sockfd,(void*)buff,BUFSIZE,0,NULL,0);
+    printf("%s\n",buff);
+
     close(sockfd);
 
     return 0;
